@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EolAtlas</title>
+    <meta charset="utf-8" />
+    <link 
+        rel="stylesheet" 
+        href="leaflet.css"
+    />
+    <link 
+        rel="stylesheet" 
+        href="stylesheet.css"
+    />
+    <link rel="icon" type="image/png" href="images/logosmall.png" />
+    <link href='http://fonts.googleapis.com/css?family=Dancing+Script:700' rel='stylesheet' type='text/css'>
+    <script src="scripts/jQuery.js"></script>
+   
+</head>
+<body> 
+ 
+    <div id="map"></div>
+    <!--<div id="overlay" style="width: 1280px; height: 800px"></div>-->
+    <div id="pointer"></div>
+    <div id="UI">
+    <div id="alert">test</div>
+      <div id="weibull" style="margin: 0 auto">Courbe Weibull</div>
+      <div id="rose" style="margin: 0 auto"> Rose des Vents</div>
+
+      <div id="regions">
+      <h4> 1) Sélectionnez au préalable votre région:</h4>
+       <hr>
+
+       <select id="select_region" onChange="show_appropriate_form()"> 
+       <option> Région sélectionnée</option>
+       <option value="Bourgogne"> Bourgogne</option>
+       <option value="Champagne"> Champagne</option>
+       <option value="Aquitaine"> Aquitaine</option>
+       <option value="Corse"> Corse</option>
+       <option value="Poitou-Charentes"> Poitou-Charentes</option>
+       </select>
+
+      <div id="recherche">
+        <form id="search">
+          <input type="text" id="terms" placeholder="Rechercher"/>
+        </form>
+        <div id="resultat"></div>
+      </div>
+      <div id="coord"></div>
+      <div id="couches" class="hide">
+       <h4> 2) Sélectionnez les calques:</h4>
+        <hr>
+        <form name="form" id="myform_bourgogne" class="hide">
+          <input type="checkbox" id="bordercheckBourgogne" unchecked> Frontière<br>
+          <input type="checkbox" id="validcheckBourgogne" unchecked> Zones valides<br>
+          <input type="checkbox" id="postescheckBourgogne"  unchecked> Hors poste source<br>
+          <input type="checkbox" id="habcheckBourgogne" unchecked> Habitations<br>
+          <input type="checkbox" id="tricheckBourgogne" unchecked> Stations radioélectriques<br>
+          <input type="checkbox" id="radarcheckBourgogne" unchecked> Aviation (radars, aérodromes, balises)<br>
+          <input type="checkbox" id="dangercheckBourgogne" unchecked> Avifaune<br>
+          <input type="checkbox" id="sourischeckBourgogne" unchecked> Chiroptères<br>
+          <input type="checkbox" id="parccheckBourgogne" unchecked> Parc naturel du Morvan<br>
+          <input type="checkbox" id="zeecheckBourgogne" unchecked> ZNIEFF (Zone Naturelle d'Intérêt Ecologique Faunistique et Floristique)<br>
+        </form>
+
+        <form name="form" id="myform_champagne" class="hide">
+          <input type="checkbox" id="bordercheckChampagne" unchecked> Frontière<br>
+          <input type="checkbox" id="radarcheckChampagne" unchecked> Aviation (radars, aérodromes, balises)<br>
+          <input type="checkbox" id="dangercheckChampagne" unchecked> Avifaune<br>
+          <input type="checkbox" id="sourischeckChampagne" unchecked> Chiroptères<br>
+          <input type="checkbox" id="zeecheckChampagne" unchecked> ZNIEFF (Zone Naturelle d'Intérêt Ecologique Faunistique et Floristique)<br>
+          <input type="checkbox" id="monucheckChampagne" unchecked> Patrimoine <br>
+        </form>
+
+        <form name="form" id="myform_aquitaine" class="hide">
+          <input type="checkbox" id="bordercheckAquitaine" unchecked> Frontière<br>
+          <input type="checkbox" id="validcheckAquitaine" unchecked> Zones valides<br>
+          <input type="checkbox" id="habcheckAquitaine" unchecked> Habitations<br>
+          <input type="checkbox" id="radarcheckAquitaine" unchecked> Aviation (radars, aérodromes, balises)<br>
+          <input type="checkbox" id="parccheckAquitaine" unchecked> Parc naturel du Morvan<br>
+          <input type="checkbox" id="monucheckAquitaine" unchecked> Patrimoine <br>
+        </form>
+
+        <form name="form" id="myform_corse" class="hide">
+          <input type="checkbox" id="bordercheckCorse" unchecked> Frontière<br>
+          <input type="checkbox" id="radarcheckCorse" unchecked> Aviation (radars, aérodromes, balises)<br>
+          <input type="checkbox" id="dangercheckCorse" unchecked> Avifaune<br>
+          <input type="checkbox" id="sourischeckCorse" unchecked> Chiroptères<br>
+          <input type="checkbox" id="zeecheckCorse" unchecked> ZNIEFF (Zone Naturelle d'Intérêt Ecologique Faunistique et Floristique)<br>
+          <input type="checkbox" id="monucheckCorse" unchecked> Patrimoine <br>
+        </form>
+
+        <form name="form" id="myform_poitou" class="hide">
+          <input type="checkbox" id="bordercheckPoitou" unchecked> Frontière<br>
+          <input type="checkbox" id="radarcheckPoitou" unchecked> Aviation (radars, aérodromes, balises)<br>
+          <input type="checkbox" id="zeecheckPoitou" unchecked> ZNIEFF (Zone Naturelle d'Intérêt Ecologique Faunistique et Floristique)<br>
+          <input type="checkbox" id="monucheckPoitou" unchecked> Patrimoine <br>
+          <input type="checkbox" id="validcheckPoitou" unchecked> Zones valides<br>
+          <input type="checkbox" id="parccheckPoitou" unchecked> Parc naturel du Morvan<br>
+        </form>
+
+      </div>
+      <!--<div id="logo">
+      	<a href="http://calsimeol.fr">
+      		<img  src="images/logo_calsimeol.png"/>
+      	</a>
+      </div>-->
+      <div id="copyright" style="display:none">
+        <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>
+      </div>
+      <div id="intro">
+      <img src="images/logo.png"><br/>
+      	Cet atlas éolien, disponible en Open Source vise à favoriser le développement des énergies renouvelables sur le territoire de France métropolitaine. Cliquez sur n'importe quel point de la carte afin d'afficher le potentiel éolien disponible pour la station météorologique la plus proche de la zone sélectionnée.
+            <div class="close"><a href="#">X</a></div>
+      </div>
+       
+       
+      <div  id="propos">
+      <a href='#' onclick = "show();return false;"> A propos </a> 
+      
+      <div class="hide" id="presentation">
+      <img src="images/logo.png"><br/> 
+<p>Notre valorisation prend la forme d'une contribution au logiciel libre.</p> <p>Ainsi, notre code source et une documentation sont disponibles : 
+<p>https://github.com/clem972/eolatlas2016</p></p>
+
+
+<p>Le site www.eolatlas.arece.fr a été développé par notre équipe qui se compose de :</p>
+<p>Equipe PPE : 2015-2016</p>
+<ul>
+<li>BERNARD Etienne, Chef de projet</li>
+<li>BOURDIN Killian, responsable valorisation</li>
+<li>AKHESBI Ghali, responsable valo</li>
+<li>CABALLERO Jean-Paul, Développeur web</li>
+<li>CRIQUET Clémentine,Développeur web</li>
+</ul>
+
+<p>Equipe PFE : 2014-2015</p>
+<ul><li>BALABANIAN Ariane</li>
+ <li>CORNEC Owen</li>
+ <li>PELÉ Marine</li>
+ <li>VARLET Marine</li>
+ <li>SÉGUIGNE Clémentine</li> </ul>
+            </div>
+      </div>
+    <!-- </div> -->
+ 
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+  <!--<script src="scripts/wind.js"></script>-->
+  <script src="scripts/EolEngine.js"></script>
+  <script src="scripts/eolscript.js"></script>
+
+  <!-- Scripts nécessaires aux graphiques HighChart/Highslide -->
+  <script src="scripts/jquery-1.7.2.js" type="text/javascript"></script>
+  <script src="scripts/highcharts.js"></script>
+  <script src="scripts/highcharts-more.js"></script>
+  <script src="scripts/exporting.js"></script>
+  <script type='text/javascript' src="scripts/highslide-full.min.js"></script>
+  <script type='text/javascript' src="scripts/highslide.config.js"></script>
+  <link rel="stylesheet" type="text/css" href="scripts/highslide.css"/>
+  <!-- Scripts pour les graphs -->
+  <script src="scripts/weibullGraph.js"></script>
+  <script src="scripts/rdvGraph.js"></script>
+</body>
+</html>
